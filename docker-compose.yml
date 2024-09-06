@@ -7,21 +7,15 @@ services:
       - "8000:8000"
     volumes:
       - .:/app
-    environment:
-      - DEBUG=1
-      - DB_NAME=database
-      - DB_USER=user
-      - DB_PASSWORD=password
-      - DB_HOST=db
+    env_file:
+      - .env
     command: python manage.py runserver 0.0.0.0:8000
 
   database:
     image: postgres:16.4
     container_name: database_container
-    environment:
-      POSTGRES_DB: database
-      POSTGRES_USER: user
-      POSTGRES_PASSWORD: password
+    env_file:
+      - .env
     volumes:
       - pgdata:/var/lib/postgresql/data
 
