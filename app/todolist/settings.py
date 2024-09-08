@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     # Add your apps here
     'rest_framework',
+    'tasks',
 ]
 
 MIDDLEWARE = [
