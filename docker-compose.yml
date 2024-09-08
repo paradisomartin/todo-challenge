@@ -2,7 +2,7 @@ version: '3'
 services:
   backend:
     build: .
-    container_name: backend_container
+    container_name: todolist_backend_container
     ports:
       - "8000:8000"
     volumes:
@@ -13,7 +13,7 @@ services:
 
   database:
     image: postgres:16.4
-    container_name: database_container
+    container_name: todolist_database_container
     env_file:
       - .env
     volumes:
