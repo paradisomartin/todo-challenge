@@ -4,14 +4,14 @@ FROM python:3.12.5-slim
 # Establecer el directorio de trabajo en el contenedor
 WORKDIR /app
 
-# Copiar el archivo de requisitos desde la carpeta 'app'
-COPY app/requirements.txt /app/
+# Copiar el archivo de requisitos
+COPY app/requirements.txt .
 
 # Instalar las dependencias
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copiar el resto de la aplicación desde la carpeta 'app'
-COPY app/ /app/
+# Copiar el resto de la aplicación
+COPY app/ .
 
 # Exponer el puerto 8000 (puerto por defecto de Django)
 EXPOSE 8000
