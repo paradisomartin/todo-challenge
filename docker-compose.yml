@@ -9,8 +9,10 @@ services:
     env_file:
       - .env
     command: python manage.py runserver 0.0.0.0:8000
+    depends_on:
+      - database
 
-  database:
+  database:  # Este nombre debe coincidir con DB_HOST en .env
     image: postgres:16.4
     container_name: todolist_database_container
     env_file:
