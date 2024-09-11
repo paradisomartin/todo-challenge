@@ -9,6 +9,7 @@ venv/
 .env
 .venv/
 
+
 # Base de datos SQLite
 db.sqlite3
 
@@ -32,3 +33,7 @@ Thumbs.db
 build/
 dist/
 *.egg-info/
+
+# IDEs
+.zed/
+.vscode/
