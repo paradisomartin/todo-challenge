@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     # Agrego las librerias necesarias para ApiRest y JWT
     'rest_framework',
     'rest_framework_simplejwt',
+    'corsheaders',
     # Agrego mis aplicaciones aqui
     'tasks',
 ]
@@ -45,6 +46,7 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -127,6 +129,21 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+DEVELOPMENT = os.environ.get('DEVELOPMENT', 'False') == 'True'
+
+if DEVELOPMENT:
+    CORS_ALLOWED_ORIGINS = [
+        "http://localhost:3000",
+        "http://127.0.0.1:3000",
+        "http://localhost:5173",
+        "http://127.0.0.1:5173",
+    ]
+else:
+    CORS_ALLOWED_ORIGINS = [
+        # Add your production origins here
+        "https://yourdomain.com",
+    ]
 
 # Rest Framework Authentication Config
 REST_FRAMEWORK = {
