@@ -19,6 +19,7 @@ class Task(models.Model):
     created_at = models.DateTimeField(auto_now_add=True, editable=False)
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='tasks')
     tags = models.ManyToManyField(Tag, related_name='tasks', blank=True)
+    is_completed = models.BooleanField(default=False)
 
     def __str__(self):
         return self.title

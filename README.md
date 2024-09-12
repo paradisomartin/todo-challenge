@@ -1,37 +1,141 @@
-# Invera ToDo-List Challenge (Python/Django Jr-SSr)
+# API de Lista de Tareas
 
-El propósito de esta prueba es conocer tu capacidad para crear una pequeña aplicación funcional en un límite de tiempo. A continuación, encontrarás las funciones, los requisitos y los puntos clave que debés tener en cuenta durante el desarrollo.
+Este proyecto proporciona una API RESTful para gestionar tareas y etiquetas en una aplicación de lista de tareas.
 
-## Qué queremos que hagas:
+## Características
 
-- El Challenge consiste en crear una aplicación web sencilla que permita a los usuarios crear y mantener una lista de tareas.
-- La entrega del resultado será en un nuevo fork de este repo y deberás hacer una pequeña demo del funcionamiento y desarrollo del proyecto ante un super comité de las más grandes mentes maestras de Invera, o a un par de devs, lo que sea más fácil de conseguir.
-- Podes contactarnos en caso que tengas alguna consulta.
+- Autenticación de usuario usando JWT
+- Operaciones CRUD para tareas
+- Operaciones CRUD para etiquetas
+- Filtrado, búsqueda y ordenación de tareas
 
-## Objetivos:
+## Endpoints de la API
 
-El usuario de la aplicación tiene que ser capaz de:
+### Tareas
 
-- Autenticarse
-- Crear una tarea
-- Eliminar una tarea
-- Marcar tareas como completadas
-- Poder ver una lista de todas las tareas existentes
-- Filtrar/buscar tareas por fecha de creación y/o por el contenido de la misma
+- `GET /api/tasks/`: Listar todas las tareas del usuario autenticado
+- `POST /api/tasks/`: Crear una nueva tarea
+- `GET /api/tasks/{id}/`: Obtener una tarea específica
+- `PUT /api/tasks/{id}/`: Actualizar una tarea específica
+- `DELETE /api/tasks/{id}/`: Eliminar una tarea específica
 
-## Qué evaluamos:
+## Filtrado y Búsqueda de Tareas
 
-- Desarrollo utilizando Python, Django. No es necesario crear un Front-End, pero sí es necesario tener una API que permita cumplir con los objetivos de arriba.
-- Uso de librerías y paquetes estandares que reduzcan la cantidad de código propio añadido.
-- Calidad y arquitectura de código. Facilidad de lectura y mantenimiento del código. Estándares seguidos.
-- [Bonus] Manejo de logs.
-- [Bonus] Creación de tests (unitarias y de integración)
-- [Bonus] Unificar la solución propuesta en una imagen de Docker por repositorio para poder ser ejecutada en cualquier ambiente (si aplica para full stack).
+Las tareas pueden ser filtradas, buscadas y ordenadas usando los siguientes parámetros en la URL:
 
-## Requerimientos de entrega:
+- Búsqueda por título o descripción: `?search=palabra_clave`
+- Ordenar por fecha de creación: `?ordering=created_at` o `?ordering=-created_at` (descendente)
+- Ordenar por título: `?ordering=title` o `?ordering=-title` (descendente)
+- Filtrar por rango de fechas:
+  - Desde: `?created_after=YYYY-MM-DD`
+  - Hasta: `?created_before=YYYY-MM-DD`
+- Filtrar por etiqueta: `?tags__title=nombre_etiqueta`
 
-- Hacer un fork del proyecto y pushearlo en github. Puede ser privado.
-- La solución debe correr correctamente.
-- El Readme debe contener todas las instrucciones para poder levantar la aplicación, en caso de ser necesario, y explicar cómo se usa.
-- Disponibilidad para realizar una pequeña demo del proyecto al finalizar el challenge.
-- Tiempo para la entrega: Aproximadamente 7 días.
+### Etiquetas
+
+- `GET /api/tags/`: Listar todas las etiquetas del usuario autenticado
+- `POST /api/tags/`: Crear una nueva etiqueta
+- `GET /api/tags/{id}/`: Obtener una etiqueta específica
+- `PUT /api/tags/{id}/`: Actualizar una etiqueta específica
+- `DELETE /api/tags/{id}/`: Eliminar una etiqueta específica
+
+## Configuración y Ejecución
+
+### Requisitos Previos
+
+- Docker
+- Docker Compose
+
+### Pasos para Ejecutar
+
+1. Clonar el repositorio:
+   ```
+   git clone <url-del-repositorio>
+   cd <directorio-del-proyecto>
+   ```
+
+2. Copiar el archivo de entorno:
+   ```
+   cp .env.example .env
+   ```
+
+3. Editar el archivo `.env` con la configuración deseada.
+
+4. Construir las imágenes de Docker:
+   ```
+   docker-compose build
+   ```
+
+5. Iniciar los servicios:
+   ```
+   docker-compose up -d
+   ```
+
+La API debería estar ahora en funcionamiento y accesible en `http://localhost:8000`.
+
+## Gestión del Proyecto con Docker
+
+Para facilitar la gestión del proyecto usando Docker, hemos creado un script de shell que simplifica la ejecución de comandos comunes de Django. Este script, `manage.sh`, se encuentra en la raíz del proyecto.
+
+### Uso del Script de Gestión
+
+Asegúrate de que el script tenga permisos de ejecución:
+
+```bash
+chmod +x manage.sh
+```
+
+Puedes usar el script de la siguiente manera:
+
+- Crear migraciones:
+  ```
+  ./manage.sh makemigrations
+  ```
+
+- Aplicar migraciones:
+  ```
+  ./manage.sh migrate
+  ```
+
+- Crear un superusuario:
+  ```
+  ./manage.sh createsuperuser
+  ```
+
+- Ejecutar pruebas:
+  ```
+  ./manage.sh test
+  ```
+
+- Abrir el shell de Django:
+  ```
+  ./manage.sh shell
+  ```
+
+### Ejemplos de Uso
+
+1. Para crear migraciones para una app específica:
+   ```
+   ./manage.sh makemigrations tasks
+   ```
+
+2. Para ejecutar pruebas de una app específica:
+   ```
+   ./manage.sh test tasks
+   ```
+
+3. Para aplicar una migración específica:
+   ```
+   ./manage.sh migrate tasks 0001
+   ```
+
+## Desarrollo
+
+Para propósitos de desarrollo, establece `DEVELOPMENT=True` en tu archivo `.env` para habilitar CORS para el desarrollo frontend local.
+
+## Pruebas
+
+Ejecuta las pruebas usando:
+```
+docker-compose run backend python manage.py test
+```

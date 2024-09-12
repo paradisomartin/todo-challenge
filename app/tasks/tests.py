@@ -1,7 +1,9 @@
 from django.test import TestCase
 from django.contrib.auth.models import User
+from django.utils import timezone
 from rest_framework.test import APIClient
 from .models import Task, Tag
+from freezegun import freeze_time
 
 class TaskAPITestCase(TestCase):
     def setUp(self):
@@ -70,3 +72,65 @@ class TaskAPITestCase(TestCase):
         response = self.client.get('/api/tags/')
         self.assertEqual(response.status_code, 200)
         self.assertEqual(len(response.data), 0)
+
+    def test_filter_tasks_by_completion_status(self):
+        Task.objects.create(title='Completed Task', user=self.user, is_completed=True)
+        Task.objects.create(title='Incomplete Task', user=self.user, is_completed=False)
+
+        response = self.client.get('/api/tasks/?is_completed=true')
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(len(response.data), 1)
+        self.assertEqual(response.data[0]['title'], 'Completed Task')
+
+        response = self.client.get('/api/tasks/?is_completed=false')
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(len(response.data), 1)
+        self.assertEqual(response.data[0]['title'], 'Incomplete Task')
+
+    def test_filter_tasks_by_tag(self):
+        task1 = Task.objects.create(title='Task with tag', user=self.user)
+        task2 = Task.objects.create(title='Task without tag', user=self.user)
+        tag = Tag.objects.create(title='TestTag', user=self.user)
+        task1.tags.add(tag)
+
+        response = self.client.get('/api/tasks/?tags__title=TestTag')
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(len(response.data), 1)
+        self.assertEqual(response.data[0]['title'], 'Task with tag')
+
+    def test_toggle_task_completion(self):
+        task = Task.objects.create(title='Test Task', user=self.user)
+        self.assertFalse(task.is_completed)
+
+        response = self.client.post(f'/api/tasks/{task.id}/toggle_completed/')
+        self.assertEqual(response.status_code, 200)
+        self.assertTrue(response.data['is_completed'])
+
+        task.refresh_from_db()
+        self.assertTrue(task.is_completed)
+
+        response = self.client.post(f'/api/tasks/{task.id}/toggle_completed/')
+        self.assertEqual(response.status_code, 200)
+        self.assertFalse(response.data['is_completed'])
+
+        task.refresh_from_db()
+        self.assertFalse(task.is_completed)
+
+    @freeze_time("2024-09-12 12:00:00")
+    def test_filter_tasks_by_creation_date(self):
+        today = timezone.now().date()
+        yesterday = today - timezone.timedelta(days=1)
+        tomorrow = today + timezone.timedelta(days=1)
+
+        with freeze_time("2024-09-11 12:00:00"):
+            Task.objects.create(title='Yesterday Task', user=self.user)
+
+        Task.objects.create(title='Today Task', user=self.user)
+
+        with freeze_time("2024-09-13 12:00:00"):
+            Task.objects.create(title='Tomorrow Task', user=self.user)
+
+        response = self.client.get(f'/api/tasks/?created_at={today.isoformat()}')
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(len(response.data), 1)
+        self.assertEqual(response.data[0]['title'], 'Today Task')
