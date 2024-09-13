@@ -1,0 +1,39 @@
+# Archivos de caché de Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Entorno virtual
+venv/
+.env
+.venv/
+
+
+# Base de datos SQLite
+db.sqlite3
+
+# Archivos de log
+*.log
+
+# Archivos de traducción
+*.pot
+*.po
+
+# Archivos temporales
+*.tmp
+*.swp
+*.swo
+
+# Archivos de sistema
+.DS_Store
+Thumbs.db
+
+# Archivos generados por el sistema de compilación
+build/
+dist/
+*.egg-info/
+
+# IDEs
+.zed/
+.vscode/
