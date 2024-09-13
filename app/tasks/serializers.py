@@ -1,5 +1,8 @@
 from rest_framework import serializers
 from .models import Task, Tag
+import logging
+
+logger = logging.getLogger(__name__)
 
 class TagSerializer(serializers.ModelSerializer):
     class Meta:
@@ -20,6 +23,7 @@ class TaskSerializer(serializers.ModelSerializer):
         read_only_fields = ['id', 'created_at']
 
     def create(self, validated_data):
+        logger.debug(f"Creating task with data: {validated_data}")
         tags_data = self.context['request'].data.get('tags', [])
         task = Task.objects.create(user=self.context['request'].user, **validated_data)
         for tag_title in tags_data:
@@ -28,6 +32,7 @@ class TaskSerializer(serializers.ModelSerializer):
         return task
 
     def update(self, instance, validated_data):
+        logger.debug(f"Updating task {instance.id} with data: {validated_data}")
         tags_data = self.context['request'].data.get('tags', None)
         instance = super().update(instance, validated_data)
 

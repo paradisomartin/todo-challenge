@@ -7,6 +7,9 @@ from .models import Task, Tag
 from .serializers import TaskSerializer, TagSerializer
 from rest_framework.permissions import IsAuthenticated
 from django_filters import rest_framework as dj_filters
+import logging
+
+logger = logging.getLogger(__name__)
 
 class TaskFilter(dj_filters.FilterSet):
     created_at = dj_filters.DateFilter(method='filter_by_date')
@@ -34,6 +37,7 @@ class TaskViewSet(viewsets.ModelViewSet):
     @action(detail=True, methods=['post'])
     def toggle_completed(self, request, pk=None):
         task = self.get_object()
+        logger.info(f"Toggling completion status for task {task.id}")
         task.is_completed = not task.is_completed
         task.save()
         return Response({'status': 'task updated', 'is_completed': task.is_completed})

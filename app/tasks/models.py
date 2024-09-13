@@ -1,6 +1,9 @@
 from django.db import models
 from django.contrib.auth.models import User
 import uuid
+import logging
+
+logger = logging.getLogger(__name__)
 
 class Tag(models.Model):
     title = models.CharField(max_length=100, blank=False, null=False)
